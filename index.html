@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pañol digital</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px;
+            max-width: 500px;
+            margin: auto;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #btnAgregar {
+            background-color: #28a745; /* Verde */
+        }
+        #btnQuitar {
+            background-color: #dc3545; /* Rojo */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            font-size: 16px;
+        }
+        .material-name {
+            font-weight: bold;
+        }
+        .time-info {
+            font-size: 14px;
+            color: #555;
+        }
+        button.small-btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-top: 5px;
+            background-color: #dc3545; /* Rojo para eliminar */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pañol digital</h1>
+    <div class="buttons">
+        <button id="btnAgregar">Agregar</button>
+        <button id="btnQuitar">Quitar</button>
+    </div>
+    <ul id="listaMateriales"></ul>
+
+    <script>
+        const listaMateriales = document.getElementById('listaMateriales');
+        const materiales = {};
+
+        // Función para verificar la clave
+        function verificarClave() {
+            const clave = prompt("Ingrese la clave:");
+            return clave === "123";
+        }
+
+        // Función para obtener la fecha y hora actuales en formato legible
+        function obtenerFechaHora() {
+            const now = new Date();
+            return now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
+
+        // Función para abrir una ventana emergente para agregar materiales
+        document.getElementById('btnAgregar').addEventListener('click', function() {
+            if (!verificarClave()) {
+                alert("Clave incorrecta.");
+                return;
+            }
+
+            const nombre = prompt("Ingrese el nombre del material:");
+            if (nombre === null || nombre.trim() === "") return;
+
+            const cantidad = parseInt(prompt("Ingrese la cantidad:"));
+            if (isNaN(cantidad) || cantidad <= 0) return;
+
+            const materialKey = nombre.trim().toLowerCase();
+            const fechaHoraIngreso = obtenerFechaHora();
+
+            if (materiales[materialKey]) {
+                materiales[materialKey].cantidad += cantidad;
+                materiales[materialKey].elemento.querySelector('.cantidad').textContent = `${materiales[materialKey].cantidad}`;
+                materiales[materialKey].elemento.querySelector('.ingreso').textContent = `Ingreso: ${fechaHoraIngreso}`;
+            } else {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="material-name">${nombre}</span>
+                    <span class="cantidad">Cantidad: ${cantidad}</span>
+                    <span class="time-info ingreso">Ingreso: ${fechaHoraIngreso}</span>
+                    <span class="time-info retiro">Retiro: -</span>
+                `;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Eliminar';
+                deleteBtn.classList.add('small-btn');
+                deleteBtn.addEventListener('click', function() {
+                    if (!verificarClave()) {
+                        alert("Clave incorrecta.");
+                        return;
+                    }
+                    listaMateriales.removeChild(li);
+                    delete materiales[materialKey];
+                });
+
+                li.appendChild(deleteBtn);
+                listaMateriales.appendChild(li);
+
+                materiales[materialKey] = {
+                    cantidad: cantidad,
+                    fechaHoraIngreso: fechaHoraIngreso,
+                    elemento: li
+                };
+            }
+        });
+
+        // Función para abrir una ventana emergente para quitar materiales
+        document.getElementById('btnQuitar').addEventListener('click', function() {
+            if (!verificarClave()) {
+                alert("Clave incorrecta.");
+                return;
+            }
+
+            const nombre = prompt("Ingrese el nombre del material a quitar:");
+            if (nombre === null || nombre.trim() === "") return;
+
+            const materialKey = nombre.trim().toLowerCase();
+
+            if (materiales[materialKey]) {
+                const cantidadAQuitar = parseInt(prompt("Ingrese la cantidad a quitar:"));
+                if (isNaN(cantidadAQuitar) || cantidadAQuitar <= 0) return;
+
+                const fechaHoraRetiro = obtenerFechaHora();
+
+                if (materiales[materialKey].cantidad > cantidadAQuitar) {
+                    materiales[materialKey].cantidad -= cantidadAQuitar;
+                    materiales[materialKey].elemento.querySelector('.cantidad').textContent = `${materiales[materialKey].cantidad}`;
+                    materiales[materialKey].elemento.querySelector('.retiro').textContent = `Retiro: ${fechaHoraRetiro}`;
+                } else {
+                    listaMateriales.removeChild(materiales[materialKey].elemento);
+                    delete materiales[materialKey];
+                }
+            } else {
+                alert("Este material no existe.");
+            }
+        });
+    </script>
+</body>
+</html>
