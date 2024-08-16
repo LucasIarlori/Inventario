@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Materiales</title>
+    <style>
+        /* Estilos para las pestañas */
+        .tab {
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Estilos para el contenido de las pestañas */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Gestión de Materiales</h1>
+
+<!-- Pestañas -->
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Agregar')">Agregar</button>
+  <button class="tablinks" onclick="openTab(event, 'Inventario')">Inventario</button>
+</div>
+
+<!-- Contenido de la pestaña "Agregar" -->
+<div id="Agregar" class="tabcontent">
+  <h2>Agregar Material</h2>
+  <p>Aquí puedes agregar nuevos materiales al inventario.</p>
+  <!-- Formulario de ejemplo para agregar material -->
+  <form>
+    <label for="materialName">Nombre del material:</label><br>
+    <input type="text" id="materialName" name="materialName"><br>
+    <label for="quantity">Cantidad:</label><br>
+    <input type="number" id="quantity" name="quantity"><br><br>
+    <input type="submit" value="Agregar">
+  </form>
+</div>
+
+<!-- Contenido de la pestaña "Inventario" -->
+<div id="Inventario" class="tabcontent">
+  <h2>Inventario</h2>
+  <p>Lista de todos los materiales en el inventario.</p>
+  <!-- Tabla de ejemplo para mostrar el inventario -->
+  <table border="1">
+    <tr>
+      <th>Nombre del Material</th>
+      <th>Cantidad</th>
+      <th>Fecha de Ingreso</th>
+    </tr>
+    <tr>
+      <td>Ejemplo Material 1</td>
+      <td>50</td>
+      <td>2024-08-16</td>
+    </tr>
+    <tr>
+      <td>Ejemplo Material 2</td>
+      <td>30</td>
+      <td>2024-08-15</td>
+    </tr>
+  </table>
+</div>
+
+<script>
+    // JavaScript para manejar las pestañas
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+</body>
+</html>
