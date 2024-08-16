@@ -64,8 +64,11 @@
         button:hover {
             opacity: 0.9;
         }
-        #btnAgregar {
+        #btnIngresar {
             background-color: #28a745; /* Verde */
+        }
+        #btnRetirar {
+            background-color: #dc3545; /* Rojo */
         }
         ul {
             list-style-type: none;
@@ -103,12 +106,13 @@
 <body>
     <h1>Pañol digital</h1>
     <div class="tabs">
-        <button id="agregarTabBtn" class="tab-link active" onclick="openTab(event, 'agregarTab')">Agregar</button>
+        <button id="agregarTabBtn" class="tab-link active" onclick="openTab(event, 'agregarTab')">Ingresar/Retirar</button>
         <button id="inventarioTabBtn" class="tab-link" onclick="openTab(event, 'inventarioTab')">Inventario</button>
     </div>
 
     <div id="agregarTab" class="tab-content active">
-        <button id="btnAgregar">Agregar</button>
+        <button id="btnIngresar">Ingresar</button>
+        <button id="btnRetirar">Retirar</button>
     </div>
 
     <div id="inventarioTab" class="tab-content">
@@ -153,10 +157,10 @@
             return now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         }
 
-        // Función para abrir una ventana emergente para agregar materiales
-        document.getElementById('btnAgregar').addEventListener('click', function() {
+        // Función para abrir una ventana emergente para ingresar materiales
+        document.getElementById('btnIngresar').addEventListener('click', function() {
             if (!verificarClave()) {
-                alert("Clave incorrecta para agregar materiales.");
+                alert("Clave incorrecta para ingresar materiales.");
                 return;
             }
 
@@ -205,6 +209,39 @@
             }
         });
 
+        // Función para retirar materiales
+        document.getElementById('btnRetirar').addEventListener('click', function() {
+            if (!verificarClave()) {
+                alert("Clave incorrecta para retirar materiales.");
+                return;
+            }
+
+            const nombre = prompt("Ingrese el nombre del material a retirar:");
+            if (nombre === null || nombre.trim() === "") return;
+
+            const cantidad = parseInt(prompt("Ingrese la cantidad a retirar:"));
+            if (isNaN(cantidad) || cantidad <= 0) return;
+
+            const materialKey = nombre.trim().toLowerCase();
+            const fechaHoraRetiro = obtenerFechaHora();
+
+            if (materiales[materialKey]) {
+                if (materiales[materialKey].cantidad >= cantidad) {
+                    materiales[materialKey].cantidad -= cantidad;
+                    materiales[materialKey].elemento.querySelector('.cantidad').textContent = `${materiales[materialKey].cantidad}`;
+                    materiales[materialKey].elemento.querySelector('.retiro').textContent = `Retiro: ${fechaHoraRetiro}`;
+
+                    if (materiales[materialKey].cantidad === 0) {
+                        listaMateriales.removeChild(materiales[materialKey].elemento);
+                        delete materiales[materialKey];
+                    }
+                } else {
+                    alert("Cantidad insuficiente en inventario.");
+                }
+            } else {
+                alert("El material no existe en el inventario.");
+            }
+        });
     </script>
 </body>
 </html>
