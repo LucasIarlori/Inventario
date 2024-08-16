@@ -3,106 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Materiales</title>
+    <title>Pañol digital</title>
     <style>
-        /* Estilos para las pestañas */
-        .tab {
-            overflow: hidden;
-            background-color: #f1f1f1;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px;
+            max-width: 500px;
+            margin: auto;
         }
-
-        .tab button {
-            background-color: inherit;
-            float: left;
+        h1 {
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .tabs button {
+            flex: 1;
+            padding: 12px;
             border: none;
-            outline: none;
+            border-bottom: 2px solid transparent;
+            color: #fff;
+            font-size: 16px;
             cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            font-size: 17px;
+            outline: none;
         }
-
-        .tab button:hover {
-            background-color: #ddd;
+        .tabs button.active {
+            border-bottom: 2px solid #fff;
+            background-color: #fff;
+            font-weight: bold;
+            color: #333;
         }
-
-        .tab button.active {
-            background-color: #ccc;
+        #agregarTabBtn {
+            background-color: #28a745; /* Verde */
         }
-
-        /* Estilos para el contenido de las pestañas */
-        .tabcontent {
+        #inventarioTabBtn {
+            background-color: #007bff; /* Azul */
+        }
+        .tab-content {
             display: none;
-            padding: 6px 12px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            margin: 5px;
             border: 1px solid #ccc;
-            border-top: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #btnAgregar {
+            background-color: #28a745; /* Verde */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            font-size: 16px;
+        }
+        .material-name {
+            font-weight: bold;
+        }
+        .time-info {
+            font-size: 14px;
+            color: #555;
+        }
+        button.small-btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-top: 5px;
+            background-color: #dc3545; /* Rojo para eliminar */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <h1>Pañol digital</h1>
+    <div class="tabs">
+        <button id="agregarTabBtn" class="tab-link active" onclick="openTab(event, 'agregarTab')">Agregar</button>
+        <button id="inventarioTabBtn" class="tab-link" onclick="openTab(event, 'inventarioTab')">Inventario</button>
+    </div>
 
-<h1>Gestión de Materiales</h1>
+    <div id="agregarTab" class="tab-content active">
+        <button id="btnAgregar">Agregar</button>
+    </div>
 
-<!-- Pestañas -->
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Agregar')">Agregar</button>
-  <button class="tablinks" onclick="openTab(event, 'Inventario')">Inventario</button>
-</div>
+    <div id="inventarioTab" class="tab-content">
+        <ul id="listaMateriales"></ul>
+    </div>
 
-<!-- Contenido de la pestaña "Agregar" -->
-<div id="Agregar" class="tabcontent">
-  <h2>Agregar Material</h2>
-  <p>Aquí puedes agregar nuevos materiales al inventario.</p>
-  <!-- Formulario de ejemplo para agregar material -->
-  <form>
-    <label for="materialName">Nombre del material:</label><br>
-    <input type="text" id="materialName" name="materialName"><br>
-    <label for="quantity">Cantidad:</label><br>
-    <input type="number" id="quantity" name="quantity"><br><br>
-    <input type="submit" value="Agregar">
-  </form>
-</div>
+    <script>
+        const listaMateriales = document.getElementById('listaMateriales');
+        const materiales = {};
 
-<!-- Contenido de la pestaña "Inventario" -->
-<div id="Inventario" class="tabcontent">
-  <h2>Inventario</h2>
-  <p>Lista de todos los materiales en el inventario.</p>
-  <!-- Tabla de ejemplo para mostrar el inventario -->
-  <table border="1">
-    <tr>
-      <th>Nombre del Material</th>
-      <th>Cantidad</th>
-      <th>Fecha de Ingreso</th>
-    </tr>
-    <tr>
-      <td>Ejemplo Material 1</td>
-      <td>50</td>
-      <td>2024-08-16</td>
-    </tr>
-    <tr>
-      <td>Ejemplo Material 2</td>
-      <td>30</td>
-      <td>2024-08-15</td>
-    </tr>
-  </table>
-</div>
+        // Función para cambiar entre pestañas
+        function openTab(evt, tabName) {
+            if (tabName === 'inventarioTab' && !verificarClave()) {
+                alert("Clave incorrecta para acceder al inventario.");
+                return;
+            }
 
-<script>
-    // JavaScript para manejar las pestañas
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
+            const tabContents = document.getElementsByClassName("tab-content");
+            const tabLinks = document.getElementsByClassName("tab-link");
+
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            for (let i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove("active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
         }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-</script>
 
+        // Función para verificar la clave
+        function verificarClave() {
+            const clave = prompt("Ingrese la clave:");
+            return clave === "123";
+        }
+
+        // Función para obtener la fecha y hora actuales en formato legible
+        function obtenerFechaHora() {
+            const now = new Date();
+            return now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
+
+        // Función para abrir una ventana emergente para agregar materiales
+        document.getElementById('btnAgregar').addEventListener('click', function() {
+            if (!verificarClave()) {
+                alert("Clave incorrecta para agregar materiales.");
+                return;
+            }
+
+            const nombre = prompt("Ingrese el nombre del material:");
+            if (nombre === null || nombre.trim() === "") return;
+
+            const cantidad = parseInt(prompt("Ingrese la cantidad:"));
+            if (isNaN(cantidad) || cantidad <= 0) return;
+
+            const materialKey = nombre.trim().toLowerCase();
+            const fechaHoraIngreso = obtenerFechaHora();
+
+            if (materiales[materialKey]) {
+                materiales[materialKey].cantidad += cantidad;
+                materiales[materialKey].elemento.querySelector('.cantidad').textContent = `${materiales[materialKey].cantidad}`;
+                materiales[materialKey].elemento.querySelector('.ingreso').textContent = `Ingreso: ${fechaHoraIngreso}`;
+            } else {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="material-name">${nombre}</span>
+                    <span class="cantidad">Cantidad: ${cantidad}</span>
+                    <span class="time-info ingreso">Ingreso: ${fechaHoraIngreso}</span>
+                    <span class="time-info retiro">Retiro: -</span>
+                `;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Eliminar';
+                deleteBtn.classList.add('small-btn');
+                deleteBtn.addEventListener('click', function() {
+                    if (!verificarClave()) {
+                        alert("Clave incorrecta para eliminar materiales.");
+                        return;
+                    }
+                    listaMateriales.removeChild(li);
+                    delete materiales[materialKey];
+                });
+
+                li.appendChild(deleteBtn);
+                listaMateriales.appendChild(li);
+
+                materiales[materialKey] = {
+                    cantidad: cantidad,
+                    fechaHoraIngreso: fechaHoraIngreso,
+                    elemento: li
+                };
+            }
+        });
+
+    </script>
 </body>
 </html>
