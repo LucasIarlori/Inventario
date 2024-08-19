@@ -1,3 +1,5 @@
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9W-XiVR2VBlVgdI3U5Zn2cYoeyzvv4P5OUmFqf8qZ5kXUI3T1pbeXkzNy1V8upuuK/exec';
+
 function agregarMaterial() {
     const material = document.getElementById('material').value;
     const cantidad = document.getElementById('cantidad').value;
@@ -11,21 +13,28 @@ function agregarMaterial() {
     }
 
     if (material && cantidad && observacion && usuario) {
-        const tabla = document.getElementById('tablaMateriales').getElementsByTagName('tbody')[0];
-        const nuevaFila = tabla.insertRow();
+        const data = {
+            material: material,
+            cantidad: cantidad,
+            observacion: observacion,
+            usuario: usuario
+        };
 
-        const celdaMaterial = nuevaFila.insertCell(0);
-        const celdaCantidad = nuevaFila.insertCell(1);
-        const celdaObservacion = nuevaFila.insertCell(2);
-        const celdaUsuario = nuevaFila.insertCell(3);
-
-        celdaMaterial.textContent = material;
-        celdaCantidad.textContent = cantidad;
-        celdaObservacion.textContent = observacion;
-        celdaUsuario.textContent = usuario;
-
-        guardarMateriales();
-        limpiarCampos();
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',  // Si necesitas una respuesta JSON, puedes quitar esta línea
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            alert("Material ingresado con éxito!");
+            limpiarCampos();
+        })
+        .catch(error => {
+            console.error('Error al enviar datos:', error);
+        });
     } else {
         alert("Por favor complete todos los campos.");
     }
@@ -39,42 +48,28 @@ function limpiarCampos() {
     document.getElementById('clave').value = '';
 }
 
-function guardarMateriales() {
-    const tabla = document.getElementById('tablaMateriales').getElementsByTagName('tbody')[0];
-    const materiales = [];
+function mostrarMateriales() {
+    fetch(SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            const tablaCuerpo = document.querySelector("#tabla-materiales tbody");
+            tablaCuerpo.innerHTML = ''; // Limpiar la tabla antes de agregar nuevas filas
 
-    for (let i = 0; i < tabla.rows.length; i++) {
-        const fila = tabla.rows[i];
-        const material = {
-            nombre: fila.cells[0].textContent,
-            cantidad: fila.cells[1].textContent,
-            observacion: fila.cells[2].textContent,
-            usuario: fila.cells[3].textContent
-        };
-        materiales.push(material);
-    }
+            data.forEach(fila => {
+                const nuevaFila = document.createElement('tr');
+                fila.forEach(celda => {
+                    const nuevaCelda = document.createElement('td');
+                    nuevaCelda.textContent = celda;
+                    nuevaFila.appendChild(nuevaCelda);
+                });
+                tablaCuerpo.appendChild(nuevaFila);
+            });
 
-    localStorage.setItem('materiales', JSON.stringify(materiales));
+            // Cambiar de pestaña
+            document.querySelector('.container').classList.remove('active');
+            document.getElementById('tab-materiales').classList.add('active');
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
 }
-
-function cargarMateriales() {
-    const materiales = JSON.parse(localStorage.getItem('materiales')) || [];
-
-    const tabla = document.getElementById('tablaMateriales').getElementsByTagName('tbody')[0];
-    materiales.forEach(material => {
-        const nuevaFila = tabla.insertRow();
-
-        const celdaMaterial = nuevaFila.insertCell(0);
-        const celdaCantidad = nuevaFila.insertCell(1);
-        const celdaObservacion = nuevaFila.insertCell(2);
-        const celdaUsuario = nuevaFila.insertCell(3);
-
-        celdaMaterial.textContent = material.nombre;
-        celdaCantidad.textContent = material.cantidad;
-        celdaObservacion.textContent = material.observacion;
-        celdaUsuario.textContent = material.usuario;
-    });
-}
-
-// Cargar los materiales guardados al cargar la página
-window.onload = cargarMateriales;
