@@ -22,7 +22,6 @@ function agregarMaterial() {
 
         fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',  // Si necesitas una respuesta JSON, puedes quitar esta línea
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -71,5 +70,6 @@ function mostrarMateriales() {
         })
         .catch(error => {
             console.error('Error al obtener los datos:', error);
+            alert("Hubo un problema al cargar los materiales.");
         });
 }
