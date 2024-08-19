@@ -9,6 +9,11 @@
         .container { width: 50%; margin: 0 auto; padding-top: 50px; }
         input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 8px; margin: 5px 0; }
         button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        #tabla-materiales { margin-top: 20px; border-collapse: collapse; width: 100%; }
+        #tabla-materiales th, #tabla-materiales td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #tabla-materiales th { background-color: #f2f2f2; }
+        .tab { display: none; }
+        .active { display: block; }
     </style>
 </head>
 <body>
@@ -20,6 +25,25 @@
         <input type="text" id="usuario" placeholder="Tu Nombre">
         <input type="password" id="clave" placeholder="Clave">
         <button onclick="agregarMaterial()">Ingresar Material</button>
+        <button onclick="mostrarMateriales()">Ver Materiales</button>
+    </div>
+
+    <div class="container tab" id="tab-materiales">
+        <h2>Lista de Materiales</h2>
+        <table id="tabla-materiales">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Cantidad</th>
+                    <th>Observación</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se agregarán las filas de la tabla dinámicamente -->
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -47,7 +71,7 @@
 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',  // Si necesitas una respuesta JSON, puedes quitar esta línea
+                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -71,6 +95,32 @@
             document.getElementById('observacion').value = '';
             document.getElementById('usuario').value = '';
             document.getElementById('clave').value = '';
+        }
+
+        function mostrarMateriales() {
+            fetch(SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    const tablaCuerpo = document.querySelector("#tabla-materiales tbody");
+                    tablaCuerpo.innerHTML = ''; // Limpiar la tabla antes de agregar nuevas filas
+
+                    data.forEach(fila => {
+                        const nuevaFila = document.createElement('tr');
+                        fila.forEach(celda => {
+                            const nuevaCelda = document.createElement('td');
+                            nuevaCelda.textContent = celda;
+                            nuevaFila.appendChild(nuevaCelda);
+                        });
+                        tablaCuerpo.appendChild(nuevaFila);
+                    });
+
+                    // Cambiar de pestaña
+                    document.querySelector('.container').classList.remove('active');
+                    document.getElementById('tab-materiales').classList.add('active');
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                });
         }
     </script>
 </body>
