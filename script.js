@@ -1,4 +1,3 @@
-// Asegúrate de que este bloque esté al principio del archivo y solo se declare una vez
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9W-XiVR2VBlVgdI3U5Zn2cYoeyzvv4P5OUmFqf8qZ5kXUI3T1pbeXkzNy1V8upuuK/exec';
 
 function agregarMaterial() {
@@ -8,44 +7,34 @@ function agregarMaterial() {
     const usuario = document.getElementById('usuario').value;
     const clave = document.getElementById('clave').value;
 
-    if (clave !== "123") {
-        alert("Clave incorrecta. Intente de nuevo.");
+    if (clave !== '123') {
+        alert('Clave incorrecta.');
         return;
     }
 
-    if (material && cantidad && observacion && usuario) {
-        const data = {
-            material: material,
-            cantidad: cantidad,
-            observacion: observacion,
-            usuario: usuario
-        };
+    const datos = {
+        material: material,
+        cantidad: cantidad,
+        observacion: observacion,
+        usuario: usuario
+    };
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(() => {
-            alert("Material ingresado con éxito!");
-            limpiarCampos();
-        })
-        .catch(error => {
-            console.error('Error al enviar datos:', error);
-        });
-    } else {
-        alert("Por favor complete todos los campos.");
-    }
-}
-
-function limpiarCampos() {
-    document.getElementById('material').value = '';
-    document.getElementById('cantidad').value = '';
-    document.getElementById('observacion').value = '';
-    document.getElementById('usuario').value = '';
-    document.getElementById('clave').value = '';
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert('Material agregado correctamente.');
+    })
+    .catch(error => {
+        console.error('Error al enviar datos:', error);
+        alert('Error al enviar datos.');
+    });
 }
 
 function mostrarMateriales() {
