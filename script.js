@@ -1,12 +1,13 @@
-// URL del Web App de Google Apps Script
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzDi40hVFOqt2YoHsX9oBfQ5eq5TzH0weWOpVaUBwjWc5Fhz9ey4zmKOOGb_ER2Tvzccg/exec';
+// Reemplaza con la URL de tu Web App
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzPTU2YdnLTThRrzAyR7nVy0Qm1nwUqPwvvbO2SyG80VcEvtinl0vXgdbwNSQgK6Ngn/exec';
 
-function enviarDatos(nombre, cantidad, fechaIngreso, fechaRetiro) {
+function enviarDatos(nombre, cantidad, fechaIngreso, fechaRetiro, retiradoPor) {
   const data = {
     nombre: nombre,
     cantidad: cantidad,
     fechaIngreso: fechaIngreso || "",
-    fechaRetiro: fechaRetiro || ""
+    fechaRetiro: fechaRetiro || "",
+    retiradoPor: retiradoPor
   };
 
   fetch(GOOGLE_SHEETS_URL, {
@@ -20,5 +21,15 @@ function enviarDatos(nombre, cantidad, fechaIngreso, fechaRetiro) {
     .catch(error => console.error('Error:', error));
 }
 
-// Ejemplo de llamada a la función
-enviarDatos('Martillo', 5, '2024-08-15', '');
+// Ejemplo de cómo llamar la función cuando se envía el formulario
+document.getElementById('materialForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  const nombre = document.getElementById('nombre').value;
+  const cantidad = document.getElementById('cantidad').value;
+  const fechaIngreso = new Date().toISOString();
+  const fechaRetiro = ""; // O el valor que corresponda
+  const retiradoPor = document.getElementById('retiradoPor').value;
+  
+  enviarDatos(nombre, cantidad, fechaIngreso, fechaRetiro, retiradoPor);
+});
