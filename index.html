@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso de Materiales</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 50%; margin: 0 auto; padding-top: 50px; }
+        input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ingreso de Materiales</h2>
+        <input type="text" id="material" placeholder="Nombre del Material">
+        <input type="number" id="cantidad" placeholder="Cantidad">
+        <input type="text" id="observacion" placeholder="Observación">
+        <input type="text" id="usuario" placeholder="Tu Nombre">
+        <input type="password" id="clave" placeholder="Clave">
+        <button onclick="agregarMaterial()">Ingresar Material</button>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9W-XiVR2VBlVgdI3U5Zn2cYoeyzvv4P5OUmFqf8qZ5kXUI3T1pbeXkzNy1V8upuuK/exec';
+
+        function agregarMaterial() {
+            const material = document.getElementById('material').value;
+            const cantidad = document.getElementById('cantidad').value;
+            const observacion = document.getElementById('observacion').value;
+            const usuario = document.getElementById('usuario').value;
+            const clave = document.getElementById('clave').value;
+
+            if (clave !== "123") {
+                alert("Clave incorrecta. Intente de nuevo.");
+                return;
+            }
+
+            if (material && cantidad && observacion && usuario) {
+                const data = {
+                    material: material,
+                    cantidad: cantidad,
+                    observacion: observacion,
+                    usuario: usuario
+                };
+
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',  // Si necesitas una respuesta JSON, puedes quitar esta línea
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(() => {
+                    alert("Material ingresado con éxito!");
+                    limpiarCampos();
+                })
+                .catch(error => {
+                    console.error('Error al enviar datos:', error);
+                });
+            } else {
+                alert("Por favor complete todos los campos.");
+            }
+        }
+
+        function limpiarCampos() {
+            document.getElementById('material').value = '';
+            document.getElementById('cantidad').value = '';
+            document.getElementById('observacion').value = '';
+            document.getElementById('usuario').value = '';
+            document.getElementById('clave').value = '';
+        }
+    </script>
+</body>
+</html>
