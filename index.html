@@ -1,36 +1,72 @@
-<script src="script.js"></script>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingreso de Materiales</title>
+    <title>Inventario de Materiales</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 50%; margin: 0 auto; padding-top: 50px; }
-        input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 8px; margin: 5px 0; }
-        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        #tabla-materiales { margin-top: 20px; border-collapse: collapse; width: 100%; }
-        #tabla-materiales th, #tabla-materiales td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        #tabla-materiales th { background-color: #f2f2f2; }
-        .tab { display: none; }
-        .active { display: block; }
+        /* Estilos básicos para la página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .container {
+            display: none;
+        }
+        .container.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Ingreso de Materiales</h2>
-        <input type="text" id="material" placeholder="Nombre del Material">
-        <input type="number" id="cantidad" placeholder="Cantidad">
-        <input type="text" id="observacion" placeholder="Observación">
-        <input type="text" id="usuario" placeholder="Tu Nombre">
-        <input type="password" id="clave" placeholder="Clave">
-        <button onclick="agregarMaterial()">Ingresar Material</button>
-        <button onclick="mostrarMateriales()">Ver Materiales</button>
-    </div>
 
-    <div class="container tab" id="tab-materiales">
-        <h2>Lista de Materiales</h2>
+    <h1>Control de Inventario</h1>
+
+    <!-- Formulario para ingresar materiales -->
+    <form id="formulario-materiales">
+        <input type="text" id="material" placeholder="Nombre del material" required>
+        <input type="number" id="cantidad" placeholder="Cantidad" required>
+        <input type="text" id="observacion" placeholder="Observación" required>
+        <input type="text" id="usuario" placeholder="Nombre del usuario" required>
+        <input type="password" id="clave" placeholder="Clave" required>
+        <button type="button" onclick="agregarMaterial()">Agregar Material</button>
+    </form>
+
+    <button type="button" onclick="mostrarMateriales()">Ver Materiales</button>
+
+    <!-- Contenedor para la tabla de materiales -->
+    <div class="container" id="tab-materiales">
         <table id="tabla-materiales">
             <thead>
                 <tr>
@@ -42,87 +78,12 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se agregarán las filas de la tabla dinámicamente -->
+                <!-- Las filas se agregarán aquí dinámicamente -->
             </tbody>
         </table>
     </div>
 
-    <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9W-XiVR2VBlVgdI3U5Zn2cYoeyzvv4P5OUmFqf8qZ5kXUI3T1pbeXkzNy1V8upuuK/exec';
-
-        function agregarMaterial() {
-            const material = document.getElementById('material').value;
-            const cantidad = document.getElementById('cantidad').value;
-            const observacion = document.getElementById('observacion').value;
-            const usuario = document.getElementById('usuario').value;
-            const clave = document.getElementById('clave').value;
-
-            if (clave !== "123") {
-                alert("Clave incorrecta. Intente de nuevo.");
-                return;
-            }
-
-            if (material && cantidad && observacion && usuario) {
-                const data = {
-                    material: material,
-                    cantidad: cantidad,
-                    observacion: observacion,
-                    usuario: usuario
-                };
-
-                fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(() => {
-                    alert("Material ingresado con éxito!");
-                    limpiarCampos();
-                })
-                .catch(error => {
-                    console.error('Error al enviar datos:', error);
-                });
-            } else {
-                alert("Por favor complete todos los campos.");
-            }
-        }
-
-        function limpiarCampos() {
-            document.getElementById('material').value = '';
-            document.getElementById('cantidad').value = '';
-            document.getElementById('observacion').value = '';
-            document.getElementById('usuario').value = '';
-            document.getElementById('clave').value = '';
-        }
-
-        function mostrarMateriales() {
-            fetch(SCRIPT_URL)
-                .then(response => response.json())
-                .then(data => {
-                    const tablaCuerpo = document.querySelector("#tabla-materiales tbody");
-                    tablaCuerpo.innerHTML = ''; // Limpiar la tabla antes de agregar nuevas filas
-
-                    data.forEach(fila => {
-                        const nuevaFila = document.createElement('tr');
-                        fila.forEach(celda => {
-                            const nuevaCelda = document.createElement('td');
-                            nuevaCelda.textContent = celda;
-                            nuevaFila.appendChild(nuevaCelda);
-                        });
-                        tablaCuerpo.appendChild(nuevaFila);
-                    });
-
-                    // Cambiar de pestaña
-                    document.querySelector('.container').classList.remove('active');
-                    document.getElementById('tab-materiales').classList.add('active');
-                })
-                .catch(error => {
-                    console.error('Error al obtener los datos:', error);
-                });
-        }
-    </script>
+    <!-- Incluir el script.js -->
+    <script src="script.js"></script>
 </body>
 </html>
