@@ -1,3 +1,4 @@
+// Asegúrate de que este bloque esté al principio del archivo y solo se declare una vez
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9W-XiVR2VBlVgdI3U5Zn2cYoeyzvv4P5OUmFqf8qZ5kXUI3T1pbeXkzNy1V8upuuK/exec';
 
 function agregarMaterial() {
