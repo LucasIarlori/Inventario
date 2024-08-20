@@ -22,8 +22,7 @@ function agregarMaterial() {
     fetch(SCRIPT_URL, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(datos)
     })
@@ -35,31 +34,4 @@ function agregarMaterial() {
         console.error('Error al enviar datos:', error);
         alert('Error al enviar datos.');
     });
-}
-
-function mostrarMateriales() {
-    fetch(SCRIPT_URL)
-        .then(response => response.json())
-        .then(data => {
-            const tablaCuerpo = document.querySelector("#tabla-materiales tbody");
-            tablaCuerpo.innerHTML = ''; // Limpiar la tabla antes de agregar nuevas filas
-
-            data.forEach(fila => {
-                const nuevaFila = document.createElement('tr');
-                fila.forEach(celda => {
-                    const nuevaCelda = document.createElement('td');
-                    nuevaCelda.textContent = celda;
-                    nuevaFila.appendChild(nuevaCelda);
-                });
-                tablaCuerpo.appendChild(nuevaFila);
-            });
-
-            // Cambiar de pestaña
-            document.querySelector('.container').classList.remove('active');
-            document.getElementById('tab-materiales').classList.add('active');
-        })
-        .catch(error => {
-            console.error('Error al obtener los datos:', error);
-            alert("Hubo un problema al cargar los materiales.");
-        });
 }
